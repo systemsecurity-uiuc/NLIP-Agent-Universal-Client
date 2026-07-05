@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NLIP Agent Universal Client</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>NLIP Agent Universal Client</h1>
+    <p>Send ECMA-430-shaped NLIP messages to configurable agent endpoints.</p>
+  </header>
+
+  <main>
+    <section class="panel controls">
+      <label for="endpoint">Agent endpoint URL</label>
+      <input id="endpoint" placeholder="https://example.com/nlip" value="http://localhost:8080/nlip">
+
+      <div class="buttons">
+        <button id="knowledge">Knowledge template</button>
+        <button id="builder">Builder template</button>
+        <button id="security">Security template</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Request</h2>
+        <label for="request">NLIP message JSON</label>
+        <textarea id="request" spellcheck="false"></textarea>
+        <button id="send">Send</button>
+      </div>
+
+      <div class="panel">
+        <h2>Response</h2>
+        <pre id="response">No response yet.</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
