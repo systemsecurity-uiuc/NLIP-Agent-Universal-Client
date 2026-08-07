@@ -14,14 +14,23 @@
 
   <main>
     <section class="panel controls">
+      <label for="agent">Agent endpoint</label>
+      <select id="agent">
+        <option value="knowledge">NLIP Knowledge Agent</option>
+        <option value="builder">NLIP Builder Agent</option>
+        <option value="custom">Custom endpoint</option>
+      </select>
+
       <label for="endpoint">Agent endpoint URL</label>
-      <input id="endpoint" placeholder="https://example.com/nlip" value="http://localhost:8080/nlip">
+      <input id="endpoint" placeholder="https://example.com/nlip">
 
       <div class="buttons">
         <button id="knowledge">Knowledge template</button>
         <button id="builder">Builder template</button>
         <button id="security">Security template</button>
+        <button id="check" class="secondary">Check status</button>
       </div>
+      <p id="status" class="status">No endpoint checked yet.</p>
     </section>
 
     <section class="grid">
