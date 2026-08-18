@@ -92,6 +92,11 @@ button.secondary {
   background: #5e6b80;
 }
 
+button.copy {
+  margin-bottom: 10px;
+  background: #2f6f61;
+}
+
 .buttons {
   display: flex;
   flex-wrap: wrap;

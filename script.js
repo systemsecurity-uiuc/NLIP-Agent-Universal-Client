@@ -4,11 +4,15 @@ const endpointInput = document.getElementById("endpoint");
 const agentSelect = document.getElementById("agent");
 const statusText = document.getElementById("status");
 
+// Demo presets: replace these values when Cloudflare tunnels or production endpoints change.
 const endpoints = {
   knowledge: "https://halo-pays-garlic-costume.trycloudflare.com/nlip",
   builder: "https://telephone-indicators-behavior-listen.trycloudflare.com/nlip",
   custom: ""
 };
+
+const savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || "{}");
+Object.assign(endpoints, savedEndpoints);
 
 const templates = {
   knowledge: {
@@ -48,12 +52,13 @@ function setAgent(name) {
   statusText.textContent = "Endpoint selected. Use Check status before a demo.";
 }
 
-function healthUrl(endpointUrl) {
+function endpointToolUrl(endpointUrl, toolPath) {
   const url = new URL(endpointUrl);
   const originalPath = url.pathname;
-  url.pathname = url.pathname.replace(/\/nlip\/?$/, "/health");
+  // Agent services expose /nlip for messages and sibling routes for status checks.
+  url.pathname = url.pathname.replace(/\/nlip\/?$/, toolPath);
   if (url.pathname === originalPath) {
-    url.pathname = "/health";
+    url.pathname = toolPath;
   }
   return url.toString();
 }
@@ -107,11 +112,20 @@ async function sendMessage() {
 
 async function checkStatus() {
   statusText.textContent = "Checking endpoint...";
+  await checkEndpoint("/health");
+}
+
+async function checkModel() {
+  statusText.textContent = "Checking model...";
+  await checkEndpoint("/model-health");
+}
+
+async function checkEndpoint(path) {
   try {
-    const response = await fetch(healthUrl(endpointInput.value), {method: "GET"});
+    const response = await fetch(endpointToolUrl(endpointInput.value, path), {method: "GET"});
     const text = await response.text();
     if (!response.ok) {
-      statusText.textContent = `Health check failed with HTTP ${response.status}.`;
+      statusText.textContent = `Check failed with HTTP ${response.status}.`;
       responseBox.textContent = text;
       return;
     }
@@ -121,11 +135,27 @@ async function checkStatus() {
       statusText.textContent = `${parsed.agent || "Endpoint"} is ${parsed.status || "reachable"} using ${parsed.model || "configured model"}.`;
       responseBox.textContent = JSON.stringify(parsed, null, 2);
     } catch {
-      statusText.textContent = "Endpoint is reachable, but health response was not JSON.";
+      statusText.textContent = "Endpoint is reachable, but check response was not JSON.";
       responseBox.textContent = text;
     }
   } catch (error) {
-    statusText.textContent = `Health check failed: ${error.message}`;
+    statusText.textContent = `Check failed: ${error.message}`;
+  }
+}
+
+async function copyResponse() {
+  try {
+    await navigator.clipboard.writeText(responseBox.textContent);
+    statusText.textContent = "Response copied.";
+  } catch {
+    statusText.textContent = "Copy failed. Select the response text manually.";
+  }
+}
+
+function saveSelectedEndpoint() {
+  if (agentSelect.value !== "custom") {
+    endpoints[agentSelect.value] = endpointInput.value.trim();
+    localStorage.setItem("nlipAgentEndpoints", JSON.stringify(endpoints));
   }
 }
 
@@ -133,7 +163,10 @@ document.getElementById("knowledge").addEventListener("click", () => setTemplate
 document.getElementById("builder").addEventListener("click", () => setTemplate("builder"));
 document.getElementById("security").addEventListener("click", () => setTemplate("security"));
 document.getElementById("check").addEventListener("click", checkStatus);
+document.getElementById("model-check").addEventListener("click", checkModel);
+document.getElementById("copy").addEventListener("click", copyResponse);
 document.getElementById("send").addEventListener("click", sendMessage);
+endpointInput.addEventListener("change", saveSelectedEndpoint);
 agentSelect.addEventListener("change", () => {
   if (agentSelect.value === "custom") {
     statusText.textContent = "Custom endpoint selected.";
