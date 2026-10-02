@@ -13,9 +13,11 @@ const endpoints = {
 
 const savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || "{}");
 Object.assign(endpoints, savedEndpoints);
-// Keep the current knowledge/security demo endpoint fresh even if the browser
-// has an older Cloudflare URL saved from a previous demo.
+// Keep the current demo endpoints fresh even if the browser has older
+// Cloudflare URLs saved from a previous demo.
 endpoints.knowledge = "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip";
+endpoints.builder = "https://played-soap-rely-settings.trycloudflare.com/nlip";
+localStorage.setItem("nlipAgentEndpoints", JSON.stringify(endpoints));
 
 const templates = {
   knowledge: {
