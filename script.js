@@ -144,7 +144,25 @@ async function checkSecurityStatus() {
 
 async function checkSecurityAudit() {
   statusText.textContent = "Loading security audit...";
-  await checkEndpoint("/security/audit?limit=10");
+  try {
+    const url = new URL(endpointInput.value);
+    url.pathname = url.pathname.replace(/\/nlip\/?$/, "/security/audit");
+    url.search = "?limit=10";
+
+    const response = await fetch(url.toString(), {method: "GET"});
+    const text = await response.text();
+    if (!response.ok) {
+      statusText.textContent = `Audit check failed with HTTP ${response.status}.`;
+      responseBox.textContent = text;
+      return;
+    }
+
+    const parsed = JSON.parse(text);
+    statusText.textContent = "Security audit loaded.";
+    responseBox.textContent = JSON.stringify(parsed, null, 2);
+  } catch (error) {
+    statusText.textContent = `Audit check failed: ${error.message}`;
+  }
 }
 
 async function checkEndpoint(path) {
