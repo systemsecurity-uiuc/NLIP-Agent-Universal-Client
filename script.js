@@ -146,7 +146,7 @@ async function checkSecurityStatus() {
 
 async function checkSecurityAudit() {
   statusText.textContent = "Loading security audit...";
-  await checkEndpoint("/security/audit?limit=10");
+  await checkEndpoint("/security/audit");
 }
 
 async function checkEndpoint(path) {
