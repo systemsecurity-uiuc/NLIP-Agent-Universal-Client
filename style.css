@@ -92,6 +92,10 @@ button.secondary {
   background: #5e6b80;
 }
 
+button.warning {
+  background: #9a541f;
+}
+
 button.copy {
   margin-bottom: 10px;
   background: #2f6f61;
