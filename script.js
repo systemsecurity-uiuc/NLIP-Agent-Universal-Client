@@ -6,7 +6,7 @@ const statusText = document.getElementById("status");
 
 // Demo presets: replace these values when Cloudflare tunnels or production endpoints change.
 const endpoints = {
-  knowledge: "https://performance-lottery-formation-docs.trycloudflare.com/nlip",
+  knowledge: "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip",
   builder: "https://telephone-indicators-behavior-listen.trycloudflare.com/nlip",
   custom: ""
 };
@@ -15,7 +15,7 @@ const savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || 
 Object.assign(endpoints, savedEndpoints);
 // Keep the current knowledge/security demo endpoint fresh even if the browser
 // has an older Cloudflare URL saved from a previous demo.
-endpoints.knowledge = "https://performance-lottery-formation-docs.trycloudflare.com/nlip";
+endpoints.knowledge = "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip";
 
 const templates = {
   knowledge: {
