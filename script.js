@@ -6,7 +6,7 @@ const statusText = document.getElementById("status");
 
 // Demo presets: replace these values when Cloudflare tunnels or production endpoints change.
 const endpoints = {
-  knowledge: "https://halo-pays-garlic-costume.trycloudflare.com/nlip",
+  knowledge: "https://performance-lottery-formation-docs.trycloudflare.com/nlip",
   builder: "https://telephone-indicators-behavior-listen.trycloudflare.com/nlip",
   custom: ""
 };
