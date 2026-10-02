@@ -13,6 +13,9 @@ const endpoints = {
 
 const savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || "{}");
 Object.assign(endpoints, savedEndpoints);
+// Keep the current knowledge/security demo endpoint fresh even if the browser
+// has an older Cloudflare URL saved from a previous demo.
+endpoints.knowledge = "https://performance-lottery-formation-docs.trycloudflare.com/nlip";
 
 const templates = {
   knowledge: {
