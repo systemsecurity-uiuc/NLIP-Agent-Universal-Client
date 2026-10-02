@@ -7,7 +7,7 @@ const statusText = document.getElementById("status");
 // Demo presets: replace these values when Cloudflare tunnels or production endpoints change.
 const endpoints = {
   knowledge: "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip",
-  builder: "https://telephone-indicators-behavior-listen.trycloudflare.com/nlip",
+  builder: "https://played-soap-rely-settings.trycloudflare.com/nlip",
   custom: ""
 };
 
