@@ -4,20 +4,24 @@ const endpointInput = document.getElementById("endpoint");
 const agentSelect = document.getElementById("agent");
 const statusText = document.getElementById("status");
 
-// Demo presets: replace these values when Cloudflare tunnels or production endpoints change.
+// Public endpoints can be entered and saved in the browser. The local demo
+// server provides a same-origin route to the SSH-forwarded knowledge agent.
 const endpoints = {
-  knowledge: "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip",
-  builder: "https://played-soap-rely-settings.trycloudflare.com/nlip",
+  knowledge: "",
+  builder: "",
   custom: ""
 };
 
-const savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || "{}");
+let savedEndpoints = {};
+try {
+  savedEndpoints = JSON.parse(localStorage.getItem("nlipAgentEndpoints") || "{}");
+} catch {
+  statusText.textContent = "Saved endpoint settings could not be read. Enter an endpoint URL.";
+}
 Object.assign(endpoints, savedEndpoints);
-// Keep the current demo endpoints fresh even if the browser has older
-// Cloudflare URLs saved from a previous demo.
-endpoints.knowledge = "https://manufacturing-fioricet-labs-bid.trycloudflare.com/nlip";
-endpoints.builder = "https://played-soap-rely-settings.trycloudflare.com/nlip";
-localStorage.setItem("nlipAgentEndpoints", JSON.stringify(endpoints));
+if (["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+  endpoints.knowledge = `${window.location.origin}/nlip`;
+}
 
 const templates = {
   knowledge: {
@@ -98,7 +102,11 @@ function renderResponse(text, response) {
   }
 
   const warning = parsed?.content?.extra?.llm_error || parsed?.content?.llm_error;
-  if (warning) {
+  if (parsed?.content?.allowed === false) {
+    statusText.textContent = "Security guard blocked the message. See the reasons below.";
+  } else if (["unavailable", "deterministic_fallback"].includes(parsed?.content?.generation_mode)) {
+    statusText.textContent = "Model generation was unavailable; see generation_mode and any llm_error.";
+  } else if (warning) {
     statusText.textContent = "Response returned with a model warning; see llm_error.";
   } else {
     statusText.textContent = "Request completed successfully.";
@@ -151,7 +159,16 @@ async function checkSecurityAudit() {
 
 async function checkEndpoint(path) {
   try {
-    const response = await fetch(endpointToolUrl(endpointInput.value, path), {method: "GET"});
+    const headers = {};
+    if (path.startsWith("/security/audit")) {
+      const token = window.prompt("Administrator audit token (used for this request only):");
+      if (!token) {
+        statusText.textContent = "Audit check cancelled.";
+        return;
+      }
+      headers.Authorization = `Bearer ${token}`;
+    }
+    const response = await fetch(endpointToolUrl(endpointInput.value, path), {method: "GET", headers});
     const text = await response.text();
     if (!response.ok) {
       statusText.textContent = `Check failed with HTTP ${response.status}.`;
