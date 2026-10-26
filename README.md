@@ -27,7 +27,10 @@ same-origin `/nlip` route. The demo server serves the page and forwards API call
 through the SSH tunnel; it binds only to the Mac's loopback interface. It does
 not expose the agent publicly. Keep both terminals running while recording.
 
-The client includes endpoint presets for the NLIP knowledge agent and NLIP builder agent, plus a custom endpoint option. Update the `endpoints` object in `script.js` when the demo tunnel or production endpoint changes.
+The knowledge-agent preset points to the deployed HTTPS service at
+`https://nlip-knowledge-jetstream.tail1f5426.ts.net/nlip`. The builder preset is
+blank until a separate builder endpoint is deployed. You can enter and save a
+different HTTPS endpoint in the browser; old temporary tunnel URLs are ignored.
 
 Use **Check status** before sending a demo request. It calls the selected endpoint's `/health` route and displays whether the service is reachable.
 
@@ -40,7 +43,7 @@ Use **Check status** before sending a demo request. It calls the selected endpoi
 5. Choose the `main` branch and `/root`.
 6. Save.
 
-GitHub will publish the client at a URL like:
+The client is published at:
 
 ```text
 https://systemsecurity-uiuc.github.io/NLIP-Agent-Universal-Client/

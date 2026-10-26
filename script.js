@@ -4,10 +4,11 @@ const endpointInput = document.getElementById("endpoint");
 const agentSelect = document.getElementById("agent");
 const statusText = document.getElementById("status");
 
-// Public endpoints can be entered and saved in the browser. The local demo
-// server provides a same-origin route to the SSH-forwarded knowledge agent.
+// The knowledge preset uses the persistent HTTPS agent. The local demo server
+// provides a same-origin route to an SSH-forwarded copy of that same service.
+const publicKnowledgeEndpoint = "https://nlip-knowledge-jetstream.tail1f5426.ts.net/nlip";
 const endpoints = {
-  knowledge: "",
+  knowledge: publicKnowledgeEndpoint,
   builder: "",
   custom: ""
 };
@@ -18,7 +19,20 @@ try {
 } catch {
   statusText.textContent = "Saved endpoint settings could not be read. Enter an endpoint URL.";
 }
-Object.assign(endpoints, savedEndpoints);
+// Older demos saved short-lived Cloudflare URLs or localhost routes. Ignore
+// those when loading the public page, while preserving other HTTPS overrides.
+for (const name of ["knowledge", "builder"]) {
+  const saved = savedEndpoints[name];
+  if (typeof saved !== "string") continue;
+  try {
+    const url = new URL(saved);
+    if (url.protocol === "https:" && !url.hostname.endsWith(".trycloudflare.com")) {
+      endpoints[name] = saved;
+    }
+  } catch {
+    // Keep the configured preset when a stored URL is invalid.
+  }
+}
 if (["localhost", "127.0.0.1"].includes(window.location.hostname)) {
   endpoints.knowledge = `${window.location.origin}/nlip`;
 }
@@ -114,6 +128,10 @@ function renderResponse(text, response) {
 }
 
 async function sendMessage() {
+  if (!endpointInput.value.trim()) {
+    statusText.textContent = "Enter an agent endpoint URL before sending.";
+    return;
+  }
   let payload;
   try {
     payload = JSON.parse(requestBox.value);
@@ -158,6 +176,10 @@ async function checkSecurityAudit() {
 }
 
 async function checkEndpoint(path) {
+  if (!endpointInput.value.trim()) {
+    statusText.textContent = "Enter an agent endpoint URL before checking.";
+    return;
+  }
   try {
     const headers = {};
     if (path.startsWith("/security/audit")) {

@@ -1,10 +1,17 @@
 # Knowledge-agent security demo
 
-This walkthrough records the browser client calling the secured knowledge agent
-running on Jetstream. It uses an SSH tunnel and the local demo server; it does
-not require a public endpoint or change the Jetstream deployment.
+This walkthrough records the GitHub Pages browser client calling the secured
+knowledge agent through its persistent HTTPS endpoint on Jetstream.
 
-## Before recording (Mac)
+## Before recording
+
+Open `https://systemsecurity-uiuc.github.io/NLIP-Agent-Universal-Client/` and
+select **NLIP Knowledge Agent**. The endpoint should be
+`https://nlip-knowledge-jetstream.tail1f5426.ts.net/nlip`. Check status before
+recording; if the page shows an old endpoint, refresh the page and reselect the
+knowledge agent.
+
+## Local fallback (Mac)
 
 In Terminal 1, keep the SSH tunnel running:
 
@@ -63,4 +70,5 @@ unless token entry is hidden while recording.
   separate in-process SDK HTTP exchange with a deterministic handler.
 - The guard detects selected direct attacks and secret signatures. It does not
   guarantee protection against all prompt injection or information leakage.
-- The SSH tunnel is a demo connection, not a permanent public endpoint.
+- The GitHub Pages site is the browser frontend; the persistent HTTPS Funnel
+  routes requests to the Jetstream knowledge-agent service.
